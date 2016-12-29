@@ -25,18 +25,6 @@ if (conf.get("env") === 'production') {
 
 // methods
 
-/*
- Find the sleep records of the user in the time range [from, to].
- */
-userSchema.statics.findByEmail = function (email, callback) {
-    this.find({
-        email: email
-    })
-        .sort({ fallAsleepTime: -1 })
-        .select({ fallAsleepTime: 1, wakeupTime: 1 })
-        .exec(callback);
-}
-
 var User = mongoose.model('User', userSchema);
 
 module.exports = User;
