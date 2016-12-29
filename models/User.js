@@ -2,15 +2,19 @@ var mongoose = require("mongoose");
 var conf = require("../config");
 
 var userSchema = mongoose.Schema({
-    userId: String,
     email: String,
-    password: String,
+    passwordHash: String,
+    salt: String,
     nickName: String,
+    headerImageUrl: String,
+    emailVerified: { type: Boolean, default: false},
+    createTime: { type: Date, default: Date.now },
+    active: { type: Boolean, default: true },
 });
 
 // indexes
 
-userSchema.index({ userId: 1});
+userSchema.index({ _id: 1});
 userSchema.index({ email: 1});
 
 if (conf.get("env") === 'production') {

@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // setup routes
-app.use('/users', users);
+app.use('/', users);
 
 app.use(errorHandler);
 
