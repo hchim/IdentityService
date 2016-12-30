@@ -18,13 +18,23 @@ router.post('/login', function (req, res, next) {
     }
 
     if (user == null) {
-      res.json({"message": "User account does not exist."});
+      res.json({
+        "message": "User account does not exist.",
+        "errorCode": "ACCOUNT_NOT_EXIST"
+      });
     } else {
       if (bcrypt.compareSync(password, user.passwordHash)) {
         //TODO generate access token
-        res.json({"loginResult": true });
+        res.json({
+          "userId": user._id,
+          "nickName": user.nickName,
+          "headerImageUrl": user.headerImageUrl
+        });
       } else {
-        res.json({"message": "Wrong password."});
+        res.json({
+          "message": "Wrong password.",
+          "errorCode": "WRONG_PASSWORD"
+        });
       }
     }
   });
@@ -40,7 +50,10 @@ router.post('/register', function(req, res, next) {
     }
 
     if (user != null) {
-      res.json({"message": "Email was already registered.", "errorCode": "EMAIL_USED"});
+      res.json({
+        "message": "Email was already registered.",
+        "errorCode": "EMAIL_USED"
+      });
     } else {
       var salt = bcrypt.genSaltSync(saltRounds);
       var hash = bcrypt.hashSync(req.body.password, salt);
@@ -57,7 +70,7 @@ router.post('/register', function(req, res, next) {
         if (err) {
           return next(err);
         }
-
+        //TODO generate access token
         res.json({"userId": user._id});
       });
     }
