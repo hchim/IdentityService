@@ -5,6 +5,31 @@ var bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
+router.get('/users/:id', function (req, res, next) {
+  var id = req.params.id;
+
+  User.findOne({ '_id': id }, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+
+    if (user == null) {
+      res.json({
+        "message": "User account does not exist.",
+        "errorCode": "ACCOUNT_NOT_EXIST"
+      });
+    } else {
+      res.json({
+        "userId": user._id,
+        "nickName": user.nickName,
+        "headerImageUrl": user.headerImageUrl,
+        "emailVerified": user.emailVerified,
+        "createTime": user.createTime,
+      });
+    }
+  });
+});
+
 /*
  Login and generate access token.
  */
@@ -23,12 +48,15 @@ router.post('/login', function (req, res, next) {
         "errorCode": "ACCOUNT_NOT_EXIST"
       });
     } else {
+      //TODO check user.active
       if (bcrypt.compareSync(password, user.passwordHash)) {
         //TODO generate access token
         res.json({
           "userId": user._id,
           "nickName": user.nickName,
-          "headerImageUrl": user.headerImageUrl
+          "headerImageUrl": user.headerImageUrl,
+          "emailVerified": user.emailVerified,
+          "createTime": user.createTime,
         });
       } else {
         res.json({
@@ -71,7 +99,13 @@ router.post('/register', function(req, res, next) {
           return next(err);
         }
         //TODO generate access token
-        res.json({"userId": user._id});
+        res.json({
+          "userId": user._id,
+          "nickName": user.nickName,
+          "headerImageUrl": user.headerImageUrl,
+          "emailVerified": user.emailVerified,
+          "createTime": user.createTime,
+        });
       });
     }
   });
