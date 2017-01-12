@@ -10,7 +10,8 @@ var conf = require("./config");
 //user defined middleware
 var errorHandler = require('./middlewares/rest_error_handler');
 //routes
-var users = require('./routes/users')
+var users = require('./routes/users');
+var index = require('./routes/index');
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // setup routes
+app.use('/', index);
 app.use('/', users);
 
 app.use(errorHandler);
