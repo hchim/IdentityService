@@ -7,8 +7,6 @@ var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
 
-//user defined middleware
-var errorHandler = require('./middlewares/rest_error_handler');
 //routes
 var users = require('./routes/users');
 var index = require('./routes/index');
@@ -37,8 +35,36 @@ app.use(cookieParser());
 
 // setup routes
 app.use('/', index);
-app.use('/', users);
+app.use('/users', users);
 
-app.use(errorHandler);
+//error handler
+//catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('404 Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// development error handler
+if (conf.get("env") === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.json({
+      "message": err.message,
+      "error": err,
+      "errorCode": "INTERNAL_FAILURE"
+    });
+  });
+}
+
+// production error handler
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  console.error(err.message);
+  res.json({
+    "message": err.message,
+    "errorCode": "INTERNAL_FAILURE"
+  });
+});
 
 module.exports = app;
