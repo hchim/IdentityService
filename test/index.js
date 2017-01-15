@@ -47,9 +47,11 @@ describe('/', function() {
         });
 
         before(function(done) {
-            testUser.save(function (err) {
-                if (err) return done(err);
-                done();
+            User.remove({}, function () {
+                testUser.save(function (err) {
+                    if (err) return done(err);
+                    done();
+                });
             });
         });
 
@@ -119,9 +121,11 @@ describe('/', function() {
         });
 
         before(function(done) {
-            testUser.save(function (err) {
-                if (err) return done(err);
-                done();
+            User.remove({}, function () {
+                testUser.save(function (err) {
+                    if (err) return done(err);
+                    done();
+                });
             });
         });
 
