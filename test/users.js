@@ -8,6 +8,7 @@ var conf = require("../config");
 var bcrypt = require('bcrypt');
 var request = require('request');
 var expect = require('Chai').expect;
+var fs = require('fs');
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
@@ -79,6 +80,42 @@ describe('/users', function() {
 
                 var json = JSON.parse(body);
                 expect(json.errorCode).to.equal('ACCOUNT_NOT_EXIST');
+                done();
+            });
+        });
+    });
+
+    describe('POST \'/:usersid/update-header\'', function() {
+        before(function(done) {
+            User.remove({}, function () {
+                testUser.save(function (err) {
+                    if (err) return done(err);
+                    done();
+                });
+            });
+        });
+
+        after(function(done) {
+            testUser.remove(function (err) {
+                if (err) return done(err);
+                done();
+            });
+        });
+
+        it('should upload the header image.', function(done) {
+            var formData = {
+                image: fs.createReadStream(__dirname + '/test.jpg')
+            };
+
+            request.post({url:endpoint + testUser._id + '/' + 'update-header', formData: formData},
+                function optionalCallback(err, res, body) {
+                if (err) {
+                    done(err);
+                }
+
+                var json = JSON.parse(body);
+                console.log(body);
+                expect(res.statusCode).to.equal(200);
                 done();
             });
         });

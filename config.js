@@ -40,6 +40,19 @@ var conf = convict({
                 "default": "mongodb://localhost/identitydb"
             }
         }
+    },
+    upload_dir: {
+        doc: 'Upload cache file directory',
+        default: 'cache_files/'
+    },
+    aws: {
+        s3: {
+            header: {
+                bucket: "sleeprecord-header",
+                accessKeyId: "AKIAJUG7F5Z3ZLM45HLA",
+                secretAccessKey: "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"
+            }
+        }
     }
 
 });

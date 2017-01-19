@@ -20,6 +20,8 @@
     "bcrypt": "~1.0.1",
     "mocha": "~3.0.0",
     "chai": "*",
-    "request": "*"
+    "request": "*",
+    "multer": "~1.2.1",
+    "aws-sdk": "~2.7.25"
   }
 }
