@@ -66,4 +66,30 @@ router.post('/:id/update-header', upload.single('image'), function(req, res, nex
   });
 });
 
+router.put('/:id/update-name', function (req, res, next) {
+  var id = req.params.id;
+
+  User.findOne({ '_id': id }, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+
+    if (user == null) {
+      res.json({
+        "message": "User account does not exist.",
+        "errorCode": "ACCOUNT_NOT_EXIST"
+      });
+    } else {
+      user.nickName = req.body.nickName;
+      user.save(function (err) {
+        if (err) return next(err);
+        res.json({
+          "userId": user._id,
+          "nickName": user.nickName,
+        });
+      });
+    }
+  });
+});
+
 module.exports = router;
