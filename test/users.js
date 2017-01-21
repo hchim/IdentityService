@@ -148,11 +148,11 @@ describe('/users', function() {
 
         it('should successfully update user name.', function(done) {
             var formData = {nickName: 'NewNickName'};
-            request.put({url: endpoint + testUser._id + '/update-name', formData: formData}, function (err, res, body){
+            request.put({url: endpoint + testUser._id + '/update-name', form: formData}, function (err, res, body){
                 if (err) done(err);
                 var json = JSON.parse(body);
                 expect(res.statusCode).to.equal(200);
-               expect(json.userId).to.equal(testUser._id.toString());
+                expect(json.userId).to.equal(testUser._id.toString());
                 done();
             });
         });
@@ -160,11 +160,71 @@ describe('/users', function() {
         it('should return ACCOUNT_NOT_EXIST error.', function (done) {
             var idNotExist = '5879e28e75ea8145cfe75e83';
             var formData = {nickName: 'NewNickName'};
-            request.put({url: endpoint + idNotExist + '/update-name', formData: formData}, function (err, res, body){
+            request.put({url: endpoint + idNotExist + '/update-name', form: formData}, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
                 expect(json.errorCode).to.equal('ACCOUNT_NOT_EXIST');
+                done();
+            });
+        });
+    });
+
+    describe('PUT \'/:userid/update-pswd\'', function() {
+        var testUser = new User({
+            "email" : "test-get@example.com",
+            "nickName" : 'TestUser',
+            "headerImageUrl": null,
+            "salt": salt,
+            "passwordHash": hash,
+        });
+
+        before(function(done) {
+            User.remove({}, function () {
+                testUser.save(function (err) {
+                    if (err) return done(err);
+                    done();
+                });
+            });
+        });
+
+        after(function(done) {
+            testUser.remove(function (err) {
+                if (err) return done(err);
+                done();
+            });
+        });
+
+        it('should successfully update password.', function(done) {
+            var formData = {oldPassword: password, 'newPassword': 'newPassword'};
+            request.put({url: endpoint + testUser._id + '/update-pswd', form: formData}, function (err, res, body){
+                if (err) done(err);
+                var json = JSON.parse(body);
+                expect(res.statusCode).to.equal(200);
+                expect(json.userId).to.equal(testUser._id.toString());
+                done();
+            });
+        });
+
+        it('should return ACCOUNT_NOT_EXIST error.', function (done) {
+            var idNotExist = '5879e28e75ea8145cfe75e83';
+            var formData = {oldPassword: password, 'newPassword': 'newPassword'};
+            request.put({url: endpoint + idNotExist + '/update-pswd', form: formData}, function (err, res, body){
+                if (err) done(err);
+
+                var json = JSON.parse(body);
+                expect(json.errorCode).to.equal('ACCOUNT_NOT_EXIST');
+                done();
+            });
+        });
+
+        it('should return WRONG_PASSWORD error.', function (done) {
+            var formData = {oldPassword: password, 'newPassword': 'newPassword'};
+            request.put({url: endpoint + testUser._id + '/update-pswd', form: formData}, function (err, res, body){
+                if (err) done(err);
+
+                var json = JSON.parse(body);
+                expect(json.errorCode).to.equal('WRONG_PASSWORD');
                 done();
             });
         });

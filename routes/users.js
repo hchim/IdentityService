@@ -5,6 +5,9 @@ var multer  = require('multer')
 var conf = require("../config");
 var AWS = require('aws-sdk');
 var fs = require('fs');
+var bcrypt = require('bcrypt');
+
+const saltRounds = 10;
 
 //setup access key for uploading header image
 AWS.config = new AWS.Config();
@@ -89,6 +92,40 @@ router.put('/:id/update-name', function (req, res, next) {
         });
       });
     }
+  });
+});
+
+router.put('/:id/update-pswd', function (req, res, next) {
+  var id = req.params.id;
+
+  User.findOne({ '_id': req.params.id }, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+
+    if (user == null) {
+      return res.json({
+        "message": "User account does not exist.",
+        "errorCode": "ACCOUNT_NOT_EXIST"
+      });
+    }
+
+    if (!bcrypt.compareSync(req.body.oldPassword, user.passwordHash)) {
+      return res.json({
+        "message": "Wrong password.",
+        "errorCode": "WRONG_PASSWORD"
+      });
+    }
+
+    user.salt = bcrypt.genSaltSync(saltRounds);
+    user.passwordHash = bcrypt.hashSync(req.body.newPassword, user.salt);
+    user.save(function (err) {
+      if (err) return next(err);
+      //TODO generate access token
+      res.json({
+        "userId": user._id,
+      });
+    });
   });
 });
 
