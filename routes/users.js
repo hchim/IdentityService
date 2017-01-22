@@ -39,7 +39,7 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
-router.post('/users/:id/verify-email', function (req, res, next) {
+router.post('/:id/verify-email', function (req, res, next) {
   var id = req.params.id;
 
   User.findOne({ '_id': id }, function (err, user) {
