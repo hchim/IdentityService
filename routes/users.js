@@ -53,7 +53,7 @@ router.post('/:id/verify-email', function (req, res, next) {
         "errorCode": "ACCOUNT_NOT_EXIST"
       });
     } else {
-      if (req.body.revifyCode == user.verifyCode) {
+      if (req.body.verifyCode == user.verifyCode) {
         user.emailVerified = true;
         user.save(function (err) {
           if (err) return next(err);

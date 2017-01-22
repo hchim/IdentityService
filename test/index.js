@@ -177,24 +177,9 @@ describe('/', function() {
     });
 
     describe('POST \'/:id/verify-email\'', function() {
-        var testUser = new User({
-            "email" : "test-postregister@example.com",
-            "nickName" : 'TestUser',
-            "headerImageUrl": null,
-            "salt": salt,
-            "passwordHash": hash,
-        });
-
         before(function(done) {
             User.remove({});
             done();
-        });
-
-        after(function(done) {
-            testUser.remove(function (err) {
-                if (err) return done(err);
-                done();
-            });
         });
 
         it('should return successfully.', function(done) {
@@ -217,11 +202,11 @@ describe('/', function() {
                     var form2 = {
                         verifyCode: user.verifyCode
                     };
-                    
+
                     request.post({url: endpoint + 'users/' + user._id + '/verify-email', form: form2}, function (err, res, body) {
                         var json2 = JSON.parse(body);
                         expect(res.statusCode).to.equal(200);
-                        expect(json.userId).to.equal(user._id.toString());
+                        expect(json2.userId).to.equal(user._id.toString());
                     });
                     done();
                 });
