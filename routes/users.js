@@ -39,6 +39,37 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
+router.post('/users/:id/verify-email', function (req, res, next) {
+  var id = req.params.id;
+
+  User.findOne({ '_id': id }, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+
+    if (user == null) {
+      res.json({
+        "message": "User account does not exist.",
+        "errorCode": "ACCOUNT_NOT_EXIST"
+      });
+    } else {
+      if (req.body.revifyCode == user.verifyCode) {
+        user.emailVerified = true;
+        user.save(function (err) {
+          if (err) return next(err);
+          res.json({
+            "userId": user._id,
+          });
+        });
+      } else {
+        res.json({
+          "message": "Wrong verification code..",
+          "errorCode": "WRONG_VERIFY_CODE"
+        });
+      }
+    }
+  });
+});
 
 var upload = multer({ dest: conf.get('upload_dir')});
 

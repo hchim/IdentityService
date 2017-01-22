@@ -23,6 +23,10 @@ var conf = convict({
             env: "PORT"
         }
     },
+    base_url: {
+        doc: "The base url of this service.",
+        default: "http://identityservice.hch.im/"
+    },
     log: {
         dateformat: {
             doc: "date format",
@@ -52,9 +56,25 @@ var conf = convict({
                 accessKeyId: "AKIAJUG7F5Z3ZLM45HLA",
                 secretAccessKey: "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"
             }
+        },
+        ses: {
+            accessKeyId: "AKIAJUG7F5Z3ZLM45HLA",
+            secretAccessKey: "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"
+        }
+    },
+    email: {
+        from_email: 'hui@hch.im',
+    },
+    email_template: {
+        register: {
+            subject: 'Welcome to SleepRecord',
+            html: 'Hi %s,<br>' +
+            'Welcome to use SleepRecord.<br>' +
+            'Please input the code to verify your email: %s<br>' +
+            'Thanks<br>' +
+            'The SleepRecord Team'
         }
     }
-
 });
 
 // Load environment dependent configuration

@@ -6,8 +6,17 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var User = require("../models/User");
 var bcrypt = require('bcrypt');
+var nodemailer = require('nodemailer');
+var conf = require("../config");
+var rs = require("randomstring");
+require("string-format-js");
 
 const saltRounds = 10;
+var transporter = nodemailer.createTransport({
+    transport: 'ses',
+    accessKeyId: conf.get('aws.ses.accessKeyId'),
+    secretAccessKey: conf.get('aws.ses.secretAccessKey')
+});
 
 router.get('/healthy', function (req, res, next) {
     if (mongoose.connection.readyState == 1) {
@@ -79,12 +88,29 @@ router.post('/register', function(req, res, next) {
                 "headerImageUrl": null,
                 "salt": salt,
                 "passwordHash": hash,
+                "verifyCode": rs.generate({length: 4, charset: 'numeric'})
             });
 
             user.save(function (err, user) {
                 if (err) {
                     return next(err);
                 }
+                // send register success email
+                var mailOptions = {
+                    from: conf.get('email.from_email'),
+                    to: user.email,
+                    subject: conf.get('email_template.register.subject'),
+                    html: conf.get('email_template.register.html')
+                        .format(user.nickName, user.activateCode)
+                };
+                console.log(mailOptions);
+                transporter.sendMail(mailOptions, function(error, info){
+                    if(error){
+                        return console.log(error);
+                    }
+                    console.log('Message sent: ' + info.response);
+                });
+
                 //TODO generate access token
                 res.json({
                     "userId": user._id,
