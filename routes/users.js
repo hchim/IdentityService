@@ -63,7 +63,7 @@ router.post('/:id/verify-email', function (req, res, next) {
         });
       } else {
         res.json({
-          "message": "Wrong verification code..",
+          "message": "Wrong verification code.",
           "errorCode": "WRONG_VERIFY_CODE"
         });
       }

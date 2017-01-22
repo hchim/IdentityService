@@ -227,5 +227,36 @@ describe('/', function() {
                 });
             });
         });
+
+        it('should return wrong WRONG_VERIFY_CODE.', function(done) {
+            var formData = {
+                email: "test-112@example.com",
+                nickName: 'TestUser2',
+                password: password
+            };
+
+            request.post({url: endpoint + 'register', form: formData}, function (err, res, body){
+                if (err) done(err);
+
+                var json = JSON.parse(body);
+                expect(res.statusCode).to.equal(200);
+                expect(json.nickName).to.equal(formData.nickName);
+
+                // clear user
+                User.findOne({'_id': json.userId}, function (err, user) {
+                    if (err) done(err);
+                    var form2 = {
+                        verifyCode: 'wrongCode'
+                    };
+
+                    request.post({url: endpoint + 'users/' + user._id + '/verify-email', form: form2}, function (err, res, body) {
+                        var json2 = JSON.parse(body);
+                        expect(res.statusCode).to.equal(200);
+                        expect(json2.errorCode).to.equal('WRONG_VERIFY_CODE');
+                    });
+                    done();
+                });
+            });
+        });
     });
 });
