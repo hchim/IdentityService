@@ -73,6 +73,13 @@ var conf = convict({
             'Please input the code to verify your email: %s<br>' +
             'Thanks<br>' +
             'The SleepRecord Team'
+        },
+        reset_email: {
+            subject: 'Reset your password',
+            html: 'Hi %s,<br>' +
+            'Please input this security code to reset your password: %s<br>' +
+            'Thanks<br>' +
+            'The SleepRecord Team'
         }
     }
 });

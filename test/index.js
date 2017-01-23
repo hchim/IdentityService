@@ -244,4 +244,43 @@ describe('/', function() {
             });
         });
     });
+
+    describe('POST \'/reset-email\'', function() {
+        before(function(done) {
+            User.remove({});
+            done();
+        });
+
+        it('should return send reset email.', function(done) {
+            var formData = {
+                email: "test-115@example.com",
+                nickName: 'TestUser2',
+                password: password
+            };
+
+            request.post({url: endpoint + 'register', form: formData}, function (err, res, body){
+                if (err) done(err);
+
+                var json = JSON.parse(body);
+
+                expect(res.statusCode).to.equal(200);
+                expect(json.nickName).to.equal(formData.nickName);
+
+                // clear user
+                User.findOne({'_id': json.userId}, function (err, user) {
+                    if (err) done(err);
+                    var form2 = {
+                        email: user.email
+                    };
+
+                    request.post({url: endpoint + 'reset-email', form: form2}, function (err, res, body) {
+                        var json2 = JSON.parse(body);
+                        expect(res.statusCode).to.equal(200);
+                        expect(json2.userId).to.equal(user._id.toString());
+                    });
+                    done();
+                });
+            });
+        });
+    });
 });

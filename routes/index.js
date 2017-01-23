@@ -124,4 +124,74 @@ router.post('/register', function(req, res, next) {
     });
 });
 
+router.post('/reset-email', function (req, res, next) {
+    var email = req.body.email;
+
+    User.findOne({ 'email': email }, function (err, user) {
+        if (err) {
+            return next(err);
+        }
+
+        if (user == null) {
+            res.json({
+                "message": "User account does not exist.",
+                "errorCode": "ACCOUNT_NOT_EXIST"
+            });
+        } else {
+            user.securityCode = rs.generate({length: 6});
+            user.save(function (err) {
+                if (err) return next(err);
+                var mailOptions = {
+                    from: conf.get('email.from_email'),
+                    to: user.email,
+                    subject: conf.get('email_template.reset_email.subject'),
+                    html: conf.get('email_template.reset_email.html')
+                        .format(user.nickName, user.securityCode)
+                };
+                console.log(mailOptions);
+                transporter.sendMail(mailOptions, function(error, info){
+                    if(error){
+                        return console.log(error);
+                    }
+                    console.log('Message sent: ' + info.response);
+                });
+                res.json({
+                    userId: user._id
+                });
+            });
+        }
+    });
+});
+
+router.post('/reset-pswd', function (req, res, next) {
+    var email = req.body.email;
+
+    User.findOne({ 'email': email }, function (err, user) {
+        if (err) {
+            return next(err);
+        }
+
+        if (user == null) {
+            res.json({
+                "message": "User account does not exist.",
+                "errorCode": "ACCOUNT_NOT_EXIST"
+            });
+        } else {
+            if (user.securityCode && user.securityCode == req.body.securityCode) {
+                user.salt = bcrypt.genSaltSync(saltRounds);
+                user.passwordHash = bcrypt.hashSync(req.body.newPassword, user.salt);
+                user.save(function (err) {
+                    if (err) return next(err);
+                    res.json({userId: user._id});
+                });
+            } else {
+                res.json({
+                    "message": "Wrong security code.",
+                    "errorCode": "WRONG_SECURITY_CODE"
+                });
+            }
+        }
+    });
+});
+
 module.exports = router;

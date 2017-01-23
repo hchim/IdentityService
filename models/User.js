@@ -10,7 +10,8 @@ var userSchema = mongoose.Schema({
     emailVerified: { type: Boolean, default: false},
     createTime: { type: Date, default: Date.now },
     active: { type: Boolean, default: true },
-    verifyCode: String
+    verifyCode: String,
+    securityCode: String
 });
 
 // indexes
