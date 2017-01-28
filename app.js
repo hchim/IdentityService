@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
+var metric = require('metricsclient')
 
 //routes
 var users = require('./routes/users');
@@ -32,6 +33,14 @@ if (conf.get("env") === "production") {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+//api usage metric
+app.use(function (req, res, next) {
+  metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
+    if (err != null)
+      console.log(err)
+    next()
+  })
+})
 
 // setup routes
 app.use('/', index);
@@ -60,11 +69,17 @@ if (conf.get("env") === 'development') {
 // production error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  console.error(err.message);
-  res.json({
-    "message": err.message,
-    "errorCode": "INTERNAL_FAILURE"
-  });
+  metric.errorMetric('IdentityService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
+    if (error != null)
+      return res.json({
+        message: 'Failed to add metric. \n' + err.message,
+        "errorCode": "INTERNAL_FAILURE"
+      });
+    res.json({
+      "message": err.message,
+      "errorCode": "INTERNAL_FAILURE"
+    });
+  })
 });
 
 module.exports = app;

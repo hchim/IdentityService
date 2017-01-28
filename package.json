@@ -26,6 +26,7 @@
     "nodemailer": "~2.7.x",
     "string-format-js": "*",
     "nodemailer-ses-transport": "*",
-    "randomstring": "*"
+    "randomstring": "*",
+    "metricsclient": "git+ssh://git@git.hch.im:service-infrastructure/metricserviceclient.git"
   }
 }
