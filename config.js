@@ -81,6 +81,10 @@ var conf = convict({
             'Thanks<br>' +
             'The SleepRecord Team'
         }
+    },
+    redis: {
+        host: '127.0.0.1',
+        port: 6379
     }
 });
 

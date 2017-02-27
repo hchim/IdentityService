@@ -9,6 +9,10 @@ var bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
 var conf = require("../config");
 var rs = require("randomstring");
+var uuid = require('node-uuid');
+var redis = require('redis')
+var metric = require('metricsclient')
+
 require("string-format-js");
 
 const saltRounds = 10;
@@ -16,6 +20,17 @@ var transporter = nodemailer.createTransport({
     transport: 'ses',
     accessKeyId: conf.get('aws.ses.accessKeyId'),
     secretAccessKey: conf.get('aws.ses.secretAccessKey')
+});
+
+//init redis
+var host = conf.get('redis.host')
+var port = conf.get('redis.port')
+var redisClient = redis.createClient(port, host);
+redisClient.on("error", function (err) {
+    console.log("Create redis client Error: " + err);
+    metric.errorMetric('IdentityService:Error:redis', err, function (err, res) {
+        //nothing
+    })
 });
 
 router.get('/healthy', function (req, res, next) {
@@ -46,13 +61,16 @@ router.post('/login', function (req, res, next) {
         } else {
             //TODO check user.active
             if (bcrypt.compareSync(password, user.passwordHash)) {
-                //TODO generate access token
+                var accessToken = uuid.v4();
+                //add accessToken to redis
+                redisClient.set(accessToken, user._id);
                 res.json({
                     "userId": user._id,
                     "nickName": user.nickName,
                     "headerImageUrl": user.headerImageUrl,
                     "emailVerified": user.emailVerified,
                     "createTime": user.createTime,
+                    "accessToken": accessToken
                 });
             } else {
                 res.json({
@@ -103,21 +121,22 @@ router.post('/register', function(req, res, next) {
                     html: conf.get('email_template.register.html')
                         .format(user.nickName, user.activateCode)
                 };
-                console.log(mailOptions);
                 transporter.sendMail(mailOptions, function(error, info){
                     if(error){
                         return console.log(error);
                     }
-                    console.log('Message sent: ' + info.response);
                 });
 
-                //TODO generate access token
+                var accessToken = uuid.v4();
+                //add accessToken to redis
+                redisClient.set(accessToken, user._id);
                 res.json({
                     "userId": user._id,
                     "nickName": user.nickName,
                     "headerImageUrl": user.headerImageUrl,
                     "emailVerified": user.emailVerified,
                     "createTime": user.createTime,
+                    "accessToken": accessToken
                 });
             });
         }

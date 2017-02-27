@@ -27,6 +27,8 @@
     "string-format-js": "*",
     "nodemailer-ses-transport": "*",
     "randomstring": "*",
+    "node-uuid": "*",
+    "redis": "~2.6.5",
     "metricsclient": "git+ssh://git@git.hch.im:service-infrastructure/metricserviceclient.git"
   }
 }
