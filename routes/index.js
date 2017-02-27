@@ -10,8 +10,7 @@ var nodemailer = require('nodemailer');
 var conf = require("../config");
 var rs = require("randomstring");
 var uuid = require('node-uuid');
-var redis = require('redis')
-var metric = require('metricsclient')
+var commonUtils = require('servicecommonutils')
 
 require("string-format-js");
 
@@ -25,13 +24,7 @@ var transporter = nodemailer.createTransport({
 //init redis
 var host = conf.get('redis.host')
 var port = conf.get('redis.port')
-var redisClient = redis.createClient(port, host);
-redisClient.on("error", function (err) {
-    console.log("Create redis client Error: " + err);
-    metric.errorMetric('IdentityService:Error:redis', err, function (err, res) {
-        //nothing
-    })
-});
+var redisClient = commonUtils.createRedisClient(host, port)
 
 router.get('/healthy', function (req, res, next) {
     if (mongoose.connection.readyState == 1) {
