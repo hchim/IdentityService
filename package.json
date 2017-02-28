@@ -29,6 +29,7 @@
     "randomstring": "*",
     "node-uuid": "*",
     "metricsclient": "git+ssh://git@git.hch.im:service-infrastructure/metricserviceclient.git",
-    "servicecommonutils": "git+ssh://git@git.hch.im:service-infrastructure/servicecommonutils.git"
+    "servicecommonutils": "git+ssh://git@git.hch.im:service-infrastructure/servicecommonutils.git",
+    "service-middlewares": "git+ssh://git@git.hch.im:service-infrastructure/service-middlewares.git"
   }
 }

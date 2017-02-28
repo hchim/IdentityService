@@ -39,7 +39,7 @@ describe('/', function() {
         done();
     });
 
-    describe('POST \'/:id/verify-email\'', function() {
+    describe('POST \'/verify-email\'', function() {
         before(function(done) {
             User.remove({}, function () {
                 done()
@@ -67,8 +67,15 @@ describe('/', function() {
                         verifyCode: user.verifyCode
                     };
 
-                    request.post({url: endpoint + 'users/' + user._id + '/verify-email', form: form2}, function (err, res, body) {
+                    request.post({
+                        url: endpoint + 'users/verify-email',
+                        form: form2,
+                        headers: {
+                            'x-auth-token': json.accessToken
+                        }
+                    }, function (err, res, body) {
                         if (err) done(err)
+                        console.log(body)
                         var json2 = JSON.parse(body);
                         expect(res.statusCode).to.equal(200);
                         expect(json2.userId).to.equal(user._id.toString());
@@ -99,7 +106,13 @@ describe('/', function() {
                         verifyCode: 'wrongCode'
                     };
 
-                    request.post({url: endpoint + 'users/' + user._id + '/verify-email', form: form2}, function (err, res, body) {
+                    request.post({
+                        url: endpoint + 'users/verify-email',
+                        form: form2,
+                        headers: {
+                            'x-auth-token': json.accessToken
+                        }
+                    }, function (err, res, body) {
                         if (err) done(err)
                         var json2 = JSON.parse(body);
                         expect(res.statusCode).to.equal(200);

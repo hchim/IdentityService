@@ -14,8 +14,14 @@ AWS.config = new AWS.Config();
 AWS.config.accessKeyId = conf.get('aws.s3.header.accessKeyId');
 AWS.config.secretAccessKey = conf.get('aws.s3.header.secretAccessKey');
 
-router.get('/:id', function (req, res, next) {
-  var id = req.params.id;
+router.get('/', function (req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
 
   User.findOne({ '_id': id }, function (err, user) {
     if (err) {
@@ -23,7 +29,7 @@ router.get('/:id', function (req, res, next) {
     }
 
     if (user == null) {
-      res.json({
+      return res.json({
         "message": "User account does not exist.",
         "errorCode": "ACCOUNT_NOT_EXIST"
       });
@@ -39,8 +45,14 @@ router.get('/:id', function (req, res, next) {
   });
 });
 
-router.post('/:id/verify-email', function (req, res, next) {
-  var id = req.params.id;
+router.post('/verify-email', function (req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
 
   User.findOne({ '_id': id }, function (err, user) {
     if (err) {
@@ -48,7 +60,7 @@ router.post('/:id/verify-email', function (req, res, next) {
     }
 
     if (user == null) {
-      res.json({
+      return res.json({
         "message": "User account does not exist.",
         "errorCode": "ACCOUNT_NOT_EXIST"
       });
@@ -73,7 +85,15 @@ router.post('/:id/verify-email', function (req, res, next) {
 
 var upload = multer({ dest: conf.get('upload_dir')});
 
-router.post('/:id/update-header', upload.single('image'), function(req, res, next) {
+router.post('/update-header', upload.single('image'), function(req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
+
   var s3 = new AWS.S3();
   var fileBuffer = fs.readFileSync(req.file.path);
 
@@ -88,7 +108,7 @@ router.post('/:id/update-header', upload.single('image'), function(req, res, nex
       return next(err);
     }
 
-    User.findOne({ '_id': req.params.id }, function (err, user) {
+    User.findOne({ '_id': id }, function (err, user) {
       if (err) return next(err);
 
       if (user != null) {
@@ -100,8 +120,14 @@ router.post('/:id/update-header', upload.single('image'), function(req, res, nex
   });
 });
 
-router.put('/:id/update-name', function (req, res, next) {
-  var id = req.params.id;
+router.put('/update-name', function (req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
 
   User.findOne({ '_id': id }, function (err, user) {
     if (err) {
@@ -109,7 +135,7 @@ router.put('/:id/update-name', function (req, res, next) {
     }
 
     if (user == null) {
-      res.json({
+      return res.json({
         "message": "User account does not exist.",
         "errorCode": "ACCOUNT_NOT_EXIST"
       });
@@ -126,10 +152,16 @@ router.put('/:id/update-name', function (req, res, next) {
   });
 });
 
-router.put('/:id/update-pswd', function (req, res, next) {
-  var id = req.params.id;
+router.put('/update-pswd', function (req, res, next) {
+    var id = req.headers['userId'];
+    if (!id) {
+        return res.json({
+            "message": "User id not found.",
+            "errorCode": "UNKNOWN_USER"
+        });
+    }
 
-  User.findOne({ '_id': req.params.id }, function (err, user) {
+  User.findOne({ '_id': id }, function (err, user) {
     if (err) {
       return next(err);
     }
@@ -152,7 +184,6 @@ router.put('/:id/update-pswd', function (req, res, next) {
     user.passwordHash = bcrypt.hashSync(req.body.newPassword, user.salt);
     user.save(function (err) {
       if (err) return next(err);
-      //TODO generate access token
       res.json({
         "userId": user._id,
       });

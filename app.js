@@ -7,6 +7,7 @@ var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
 var metric = require('metricsclient')
+var middlewares = require('service-middlewares')(conf)
 
 //routes
 var users = require('./routes/users');
@@ -44,7 +45,7 @@ app.use(function (req, res, next) {
 
 // setup routes
 app.use('/', index);
-app.use('/users', users);
+app.use('/users', middlewares.auth_middleware, users);
 
 //error handler
 //catch 404 and forward to error handler

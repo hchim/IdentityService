@@ -14,6 +14,8 @@ var commonUtils = require('servicecommonutils')
 
 require("string-format-js");
 
+//the expiration time of auth token, 30 days
+const auth_token_expire = 30 * 24 * 60 * 60;
 const saltRounds = 10;
 var transporter = nodemailer.createTransport({
     transport: 'ses',
@@ -56,7 +58,8 @@ router.post('/login', function (req, res, next) {
             if (bcrypt.compareSync(password, user.passwordHash)) {
                 var accessToken = uuid.v4();
                 //add accessToken to redis
-                redisClient.set(accessToken, user._id);
+                redisClient.set(accessToken, user._id.toString());
+                redisClient.expire(accessToken, auth_token_expire)
                 res.json({
                     "userId": user._id,
                     "nickName": user.nickName,
@@ -122,7 +125,8 @@ router.post('/register', function(req, res, next) {
 
                 var accessToken = uuid.v4();
                 //add accessToken to redis
-                redisClient.set(accessToken, user._id);
+                redisClient.set(accessToken, user._id.toString());
+                redisClient.expire(accessToken, auth_token_expire)
                 res.json({
                     "userId": user._id,
                     "nickName": user.nickName,
@@ -160,7 +164,7 @@ router.post('/reset-email', function (req, res, next) {
                     html: conf.get('email_template.reset_email.html')
                         .format(user.nickName, user.securityCode)
                 };
-                console.log(mailOptions);
+                // console.log(mailOptions);
                 transporter.sendMail(mailOptions, function(error, info){
                     if(error){
                         return console.log(error);
