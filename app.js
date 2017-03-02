@@ -13,6 +13,7 @@ var utils = require('servicecommonutils')
 //routes
 var users = require('./routes/users');
 var index = require('./routes/index');
+var auth = require('./routes/auth')
 
 var app = express();
 
@@ -44,12 +45,13 @@ app.use(function (req, res, next) {
   })
 })
 
+app.use('/', index);
 //request signature checkup
 if (conf.get("env") !== 'test') {
   app.use(middlewares.signature_middleware)
 }
 // setup routes
-app.use('/', index);
+app.use('/', auth);
 app.use('/users', middlewares.auth_middleware, users);
 
 //error handler
