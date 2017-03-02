@@ -49,7 +49,12 @@ describe('/', function() {
                 password: password
             };
 
-            request.post({url: endpoint + 'register', form: formData}, function (err, res, body) {
+            request.post({
+                url: endpoint + 'register', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body) {
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -66,7 +71,12 @@ describe('/', function() {
                     email: user.email
                 };
 
-                request.post({url: endpoint + 'reset-email', form: form2}, function (err, res, body) {
+                request.post({
+                    url: endpoint + 'reset-email', form: form2,
+                    headers: {
+                        'is-internal-request': 'YES'
+                    }
+                }, function (err, res, body) {
                     var json = JSON.parse(body);
                     expect(res.statusCode).to.equal(200);
                     expect(json.userId).to.equal(userId);

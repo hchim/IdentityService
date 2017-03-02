@@ -79,7 +79,12 @@ describe('/users', function() {
                 password: password
             };
 
-            request.post({url: login_endpoint, form: loginformData}, function (err, res, body) {
+            request.post({
+                url: login_endpoint, form: loginformData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body) {
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -88,7 +93,8 @@ describe('/users', function() {
                 request.put({
                     url: endpoint + 'update-name', form: formData,
                     headers: {
-                        'x-auth-token': json.accessToken
+                        'x-auth-token': json.accessToken,
+                        'is-internal-request': 'YES'
                     }
                 }, function (err, res, body) {
                     if (err) done(err);

@@ -68,7 +68,12 @@ describe('/', function() {
                 password: password
             };
 
-            request.post({url: endpoint + 'login', form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint + 'login', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -84,7 +89,12 @@ describe('/', function() {
                 password: 'wrong_password'
             };
 
-            request.post({url: endpoint + 'login', form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint + 'login', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -100,7 +110,12 @@ describe('/', function() {
                 password: 'wrong_password'
             };
 
-            request.post({url: endpoint + 'login', form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint + 'login', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);

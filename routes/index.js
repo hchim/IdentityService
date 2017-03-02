@@ -10,7 +10,7 @@ var nodemailer = require('nodemailer');
 var conf = require("../config");
 var rs = require("randomstring");
 var uuid = require('node-uuid');
-var commonUtils = require('servicecommonutils')
+var utils = require('servicecommonutils')
 
 require("string-format-js");
 
@@ -26,7 +26,7 @@ var transporter = nodemailer.createTransport({
 //init redis
 var host = conf.get('redis.host')
 var port = conf.get('redis.port')
-var redisClient = commonUtils.createRedisClient(host, port)
+var redisClient = utils.createRedisClient(host, port)
 
 router.get('/healthy', function (req, res, next) {
     if (mongoose.connection.readyState == 1) {
@@ -49,10 +49,10 @@ router.post('/login', function (req, res, next) {
         }
 
         if (user == null) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 "message": "User account does not exist.",
                 "errorCode": "ACCOUNT_NOT_EXIST"
-            });
+            }));
         } else {
             //TODO check user.active
             if (bcrypt.compareSync(password, user.passwordHash)) {
@@ -60,19 +60,19 @@ router.post('/login', function (req, res, next) {
                 //add accessToken to redis
                 redisClient.set(accessToken, user._id.toString());
                 redisClient.expire(accessToken, auth_token_expire)
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     "userId": user._id,
                     "nickName": user.nickName,
                     "headerImageUrl": user.headerImageUrl,
                     "emailVerified": user.emailVerified,
                     "createTime": user.createTime,
                     "accessToken": accessToken
-                });
+                }));
             } else {
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     "message": "Wrong password.",
                     "errorCode": "WRONG_PASSWORD"
-                });
+                }));
             }
         }
     });
@@ -88,10 +88,10 @@ router.post('/register', function(req, res, next) {
         }
 
         if (user != null) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 "message": "Email was already registered.",
                 "errorCode": "EMAIL_USED"
-            });
+            }));
         } else {
             var salt = bcrypt.genSaltSync(saltRounds);
             var hash = bcrypt.hashSync(req.body.password, salt);
@@ -127,14 +127,14 @@ router.post('/register', function(req, res, next) {
                 //add accessToken to redis
                 redisClient.set(accessToken, user._id.toString());
                 redisClient.expire(accessToken, auth_token_expire)
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     "userId": user._id,
                     "nickName": user.nickName,
                     "headerImageUrl": user.headerImageUrl,
                     "emailVerified": user.emailVerified,
                     "createTime": user.createTime,
                     "accessToken": accessToken
-                });
+                }));
             });
         }
     });
@@ -149,10 +149,10 @@ router.post('/reset-email', function (req, res, next) {
         }
 
         if (user == null) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 "message": "User account does not exist.",
                 "errorCode": "ACCOUNT_NOT_EXIST"
-            });
+            }));
         } else {
             user.securityCode = rs.generate({length: 6});
             user.save(function (err) {
@@ -171,9 +171,9 @@ router.post('/reset-email', function (req, res, next) {
                     }
                     console.log('Message sent: ' + info.response);
                 });
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     userId: user._id
-                });
+                }));
             });
         }
     });
@@ -188,10 +188,10 @@ router.post('/reset-pswd', function (req, res, next) {
         }
 
         if (user == null) {
-            res.json({
+            res.json(utils.encodeResponseBody(req, {
                 "message": "User account does not exist.",
                 "errorCode": "ACCOUNT_NOT_EXIST"
-            });
+            }));
         } else {
             if (user.securityCode && user.securityCode == req.body.securityCode) {
                 user.salt = bcrypt.genSaltSync(saltRounds);
@@ -201,10 +201,10 @@ router.post('/reset-pswd', function (req, res, next) {
                     res.json({userId: user._id});
                 });
             } else {
-                res.json({
+                res.json(utils.encodeResponseBody(req, {
                     "message": "Wrong security code.",
                     "errorCode": "WRONG_SECURITY_CODE"
-                });
+                }));
             }
         }
     });

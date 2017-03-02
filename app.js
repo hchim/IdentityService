@@ -8,6 +8,7 @@ var fs = require('fs');
 var conf = require("./config");
 var metric = require('metricsclient')
 var middlewares = require('service-middlewares')(conf)
+var utils = require('servicecommonutils')
 
 //routes
 var users = require('./routes/users');
@@ -63,11 +64,11 @@ app.use(function(req, res, next) {
 if (conf.get("env") === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.json({
+    res.json(utils.encodeResponseBody(req, {
       "message": err.message,
       "error": err,
       "errorCode": "INTERNAL_FAILURE"
-    });
+    }));
   });
 }
 
@@ -76,14 +77,14 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   metric.errorMetric('IdentityService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
     if (error != null)
-      return res.json({
+      return res.json(utils.encodeResponseBody(req, {
         message: 'Failed to add metric. \n' + err.message,
         "errorCode": "INTERNAL_FAILURE"
-      });
-    res.json({
+      }));
+    res.json(utils.encodeResponseBody(req, {
       "message": err.message,
       "errorCode": "INTERNAL_FAILURE"
-    });
+    }));
   })
 });
 

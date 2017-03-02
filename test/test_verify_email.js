@@ -53,7 +53,12 @@ describe('/', function() {
                 password: password
             };
 
-            request.post({url: endpoint + 'register', form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint + 'register', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -71,7 +76,8 @@ describe('/', function() {
                         url: endpoint + 'users/verify-email',
                         form: form2,
                         headers: {
-                            'x-auth-token': json.accessToken
+                            'x-auth-token': json.accessToken,
+                            'is-internal-request': 'YES'
                         }
                     }, function (err, res, body) {
                         if (err) done(err)
@@ -92,7 +98,12 @@ describe('/', function() {
                 password: password
             };
 
-            request.post({url: endpoint + 'register', form: formData}, function (err, res, body){
+            request.post({
+                url: endpoint + 'register', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
                 if (err) done(err);
 
                 var json = JSON.parse(body);
@@ -110,7 +121,8 @@ describe('/', function() {
                         url: endpoint + 'users/verify-email',
                         form: form2,
                         headers: {
-                            'x-auth-token': json.accessToken
+                            'x-auth-token': json.accessToken,
+                            'is-internal-request': 'YES'
                         }
                     }, function (err, res, body) {
                         if (err) done(err)

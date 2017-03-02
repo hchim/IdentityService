@@ -41,6 +41,9 @@ describe('/reset-pswd', function() {
                 email: email,
                 nickName: nickName,
                 password: password
+            },
+            headers: {
+                'is-internal-request': 'YES'
             }
         }, function (err, res, body){
             if (err) done(err);
@@ -56,6 +59,9 @@ describe('/reset-pswd', function() {
                 url: endpoint + 'reset-email',
                 form: {
                     email: email
+                },
+                headers: {
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body) {
                 if (err) done(err);
@@ -74,6 +80,9 @@ describe('/reset-pswd', function() {
                             email: email,
                             securityCode: user.securityCode,
                             newPassword: 'newPassword'
+                        },
+                        headers: {
+                            'is-internal-request': 'YES'
                         }
                     }, function (err, res, body) {
                         var json2 = JSON.parse(body);
@@ -98,6 +107,9 @@ describe('/reset-pswd', function() {
                 email: email,
                 nickName: nickName,
                 password: password
+            },
+            headers: {
+                'is-internal-request': 'YES'
             }
         }, function (err, res, body){
             if (err) done(err);
@@ -115,6 +127,9 @@ describe('/reset-pswd', function() {
                     email: email,
                     securityCode: 'wrongCode',
                     newPassword: 'newPassword'
+                },
+                headers: {
+                    'is-internal-request': 'YES'
                 }
             }, function (err, res, body) {
                 if (err) done(err);
