@@ -1,11 +1,21 @@
 var mongoose = require("mongoose");
 var conf = require("../config");
+const validator = require('validator');
 
 var userSchema = mongoose.Schema({
-    email: String,
+    email: {
+        type: String,
+        required: true,
+        validate: [validator.isEmail, 'Invalid email'],
+    },
     passwordHash: String,
     salt: String,
-    nickName: String,
+    nickName: {
+        type: String,
+        required: true,
+        maxlength: 20,
+        minlength: 5
+    },
     headerImageUrl: String,
     emailVerified: { type: Boolean, default: false},
     createTime: { type: Date, default: Date.now },

@@ -37,13 +37,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //api usage metric
-app.use(function (req, res, next) {
-  metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
-    if (err != null)
-      console.log(err)
-    next()
+if (conf.get("env") !== 'test') {
+  app.use(function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
+      if (err != null)
+        console.log(err)
+      next()
+    })
   })
-})
+}
 
 app.use('/', index);
 //request signature checkup
@@ -66,7 +68,7 @@ app.use(function(req, res, next) {
 if (conf.get("env") === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.json(utils.encodeResponseBody(req, {
+    return res.json(utils.encodeResponseBody(req, {
       "message": err.message,
       "error": err,
       "errorCode": "INTERNAL_FAILURE"
@@ -83,7 +85,7 @@ app.use(function(err, req, res, next) {
         message: 'Failed to add metric. \n' + err.message,
         "errorCode": "INTERNAL_FAILURE"
       }));
-    res.json(utils.encodeResponseBody(req, {
+    return res.json(utils.encodeResponseBody(req, {
       "message": err.message,
       "errorCode": "INTERNAL_FAILURE"
     }));

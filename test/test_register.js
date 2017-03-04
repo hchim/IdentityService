@@ -110,5 +110,26 @@ describe('/', function() {
                 done();
             });
         });
+
+        it('invalid email error.', function(done) {
+            var formData = {
+                email: 'wrongemail',
+                nickName: 'TestUser2',
+                password: password
+            };
+
+            request.post({
+                url: endpoint + 'register', form: formData,
+                headers: {
+                    'is-internal-request': 'YES'
+                }
+            }, function (err, res, body){
+                if (err) done(err);
+
+                var json = JSON.parse(body);
+                expect(res.statusCode).to.equal(500);
+                done();
+            });
+        });
     });
 })
