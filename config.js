@@ -87,8 +87,8 @@ var conf = convict({
         port: 6379
     },
     google: {
-        client_id: '650072071981-l2jj7dl5vusk55k1uii7kj69ush9f9hd.apps.googleusercontent.com',
-        secret: 'GlG_Kpm2PtYfAA88JNU1TU0n'
+        client_id: '894802459298-3637204prl1d2vnce72bfjeptjivmg18.apps.googleusercontent.com',
+        secret: 'AIzaSyDGvFHSmqeOVtLmz7s18SSbrLxMYDrzEEM'
     }
 });
 
