@@ -29,6 +29,7 @@
     "randomstring": "*",
     "node-uuid": "*",
     "validator": "*",
+    "google-auth-library": "0.10.0",
     "metricsclient": "git+ssh://git@git.hch.im:service-infrastructure/metricserviceclient.git",
     "servicecommonutils": "git+ssh://git@git.hch.im:service-infrastructure/servicecommonutils.git",
     "service-middlewares": "git+ssh://git@git.hch.im:service-infrastructure/service-middlewares.git"

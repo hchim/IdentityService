@@ -14,23 +14,24 @@ var utils = require('servicecommonutils')
 var users = require('./routes/users');
 var index = require('./routes/index');
 var auth = require('./routes/auth')
+var google = require('./routes/google')
 
 var app = express();
 
 if (conf.get("env") === "production") {
-  var logDirectory = __dirname + '/log';
-  // ensure log directory exists
-  fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
-  // create a rotating write stream
-  var accessLogStream = FileStreamRotator.getStream({
-    date_format: conf.get('log.dateformat'),
-    filename: logDirectory + '/access-%DATE%.log',
-    frequency: conf.get("log.frequency"),
-    verbose: false
-  });
-  app.use(morgan('combined', {stream: accessLogStream}));
+    var logDirectory = __dirname + '/log';
+    // ensure log directory exists
+    fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+    // create a rotating write stream
+    var accessLogStream = FileStreamRotator.getStream({
+        date_format: conf.get('log.dateformat'),
+        filename: logDirectory + '/access-%DATE%.log',
+        frequency: conf.get("log.frequency"),
+        verbose: false
+    });
+    app.use(morgan('combined', {stream: accessLogStream}));
 } else {
-  app.use(morgan('dev'));
+    app.use(morgan('dev'));
 }
 
 app.use(bodyParser.json());
@@ -38,13 +39,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //api usage metric
 if (conf.get("env") !== 'test') {
-  app.use(function (req, res, next) {
-    metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
-      if (err != null)
-        console.log(err)
-      next()
+    app.use(function (req, res, next) {
+        metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
+            if (err != null)
+                console.log(err)
+            next()
+        })
     })
-  })
 }
 
 app.use('/', index);
@@ -54,6 +55,7 @@ if (conf.get("env") !== 'test') {
 }
 // setup routes
 app.use('/', auth);
+app.use('/google', google)
 app.use('/users', middlewares.auth_middleware, users);
 
 //error handler
@@ -66,30 +68,30 @@ app.use(function(req, res, next) {
 
 // development error handler
 if (conf.get("env") === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    return res.json(utils.encodeResponseBody(req, {
-      "message": err.message,
-      "error": err,
-      "errorCode": "INTERNAL_FAILURE"
-    }));
-  });
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        return res.json(utils.encodeResponseBody(req, {
+            "message": err.message,
+            "error": err,
+            "errorCode": "INTERNAL_FAILURE"
+        }));
+    });
 }
 
 // production error handler
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  metric.errorMetric('IdentityService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
-    if (error != null)
-      return res.json(utils.encodeResponseBody(req, {
-        message: 'Failed to add metric. \n' + err.message,
-        "errorCode": "INTERNAL_FAILURE"
-      }));
-    return res.json(utils.encodeResponseBody(req, {
-      "message": err.message,
-      "errorCode": "INTERNAL_FAILURE"
-    }));
-  })
+    res.status(err.status || 500);
+    metric.errorMetric('IdentityService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
+        if (error != null)
+            return res.json(utils.encodeResponseBody(req, {
+                message: 'Failed to add metric. \n' + err.message,
+                "errorCode": "INTERNAL_FAILURE"
+            }));
+        return res.json(utils.encodeResponseBody(req, {
+            "message": err.message,
+            "errorCode": "INTERNAL_FAILURE"
+        }));
+    })
 });
 
 module.exports = app;

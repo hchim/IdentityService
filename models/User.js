@@ -21,7 +21,8 @@ var userSchema = mongoose.Schema({
     createTime: { type: Date, default: Date.now },
     active: { type: Boolean, default: true },
     verifyCode: String,
-    securityCode: String
+    securityCode: String,
+    openidProvider: String, //Google, Facebook, Wechat
 });
 
 // indexes

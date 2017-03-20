@@ -85,6 +85,9 @@ var conf = convict({
     redis: {
         host: '127.0.0.1',
         port: 6379
+    },
+    google: {
+        client_id: '650072071981-l2jj7dl5vusk55k1uii7kj69ush9f9hd.apps.googleusercontent.com'
     }
 });
 
