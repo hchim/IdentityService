@@ -4,15 +4,17 @@ var User = require("../models/User");
 var GoogleAuth = require('google-auth-library');
 var conf = require("../config");
 
+var clientId = conf.get('google.client_id')
+var clientSec = conf.get('google.secret')
+
 router.post('/verify-token', function (req, res, next) {
     var email = req.body.email;
     var idToken = req.body.idToken;
     var userName = req.body.userName;
 
-    var clientId = conf.get('google.client_id')
     var auth = new GoogleAuth;
     // the other two parameters (CLIENT_SECRET and REDIRECT_URL) are not needed
-    var client = new auth.OAuth2(clientId, '', '');
+    var client = new auth.OAuth2(clientId, clientSec, '');
 
     // https://github.com/google/google-auth-library-nodejs/blob/master/lib/auth/oauth2client.js
     client.verifyIdToken(
