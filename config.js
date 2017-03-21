@@ -21,6 +21,9 @@ var conf = convict({
             format: 'port',
             default: 3011,
             env: "PORT"
+        },
+        session: {
+            auth_token_expire: 30 * 24 * 60 * 60
         }
     },
     base_url: {

@@ -3,9 +3,17 @@ var router = express.Router();
 var User = require("../models/User");
 var conf = require("../config");
 var request = require('request');
+var uuid = require('node-uuid');
+var utils = require('servicecommonutils')
+
+//init redis
+var host = conf.get('redis.host')
+var port = conf.get('redis.port')
+var redisClient = utils.createRedisClient(host, port)
 
 var clientId = conf.get('facebook.app_id')
 var clientSec = conf.get('facebook.secret')
+var auth_token_expire = conf.get('server.session.auth_token_expire');
 
 router.post('/verify-token', function (req, res, next) {
     var email = req.body.email;

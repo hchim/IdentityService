@@ -30,8 +30,8 @@ var userSchema = mongoose.Schema({
  * @param user
  * @param callback
  */
-userSchema.methods.getOrCreate = function(user, callback) {
-    User.findOne({ 'email': user.email, 'active': true}, function (err, obj) {
+userSchema.statics.getOrCreate = function(user, callback) {
+    this.findOne({ 'email': user.email, 'active': true}, function (err, obj) {
         if (err) {
             return callback(err, null);
         }

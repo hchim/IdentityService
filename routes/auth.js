@@ -14,7 +14,7 @@ var utils = require('servicecommonutils')
 require("string-format-js");
 
 //the expiration time of auth token, 30 days
-const auth_token_expire = 30 * 24 * 60 * 60;
+var auth_token_expire = conf.get('server.session.auth_token_expire');
 const saltRounds = 10;
 var transporter = nodemailer.createTransport({
     transport: 'ses',
