@@ -89,6 +89,10 @@ var conf = convict({
     google: {
         client_id: '894802459298-3637204prl1d2vnce72bfjeptjivmg18.apps.googleusercontent.com',
         secret: 'AIzaSyDGvFHSmqeOVtLmz7s18SSbrLxMYDrzEEM'
+    },
+    facebook: {
+        app_id: '1891279461107263',
+        secret: 'aaa03e9f3f84ce950826fed305fa477d'
     }
 });
 

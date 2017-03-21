@@ -25,6 +25,30 @@ var userSchema = mongoose.Schema({
     openidProvider: String, //Google, Facebook, Wechat
 });
 
+/**
+ * Get the active user. If user not exist, create it.
+ * @param user
+ * @param callback
+ */
+userSchema.methods.getOrCreate = function(user, callback) {
+    User.findOne({ 'email': user.email, 'active': true}, function (err, obj) {
+        if (err) {
+            return callback(err, null);
+        }
+
+        if (obj) {
+            return callback(null, obj);
+        } else {
+            user.save(function (err, user) {
+                if (err) {
+                    return callback(err, null);
+                }
+                return callback(null, user);
+            })
+        }
+    });
+};
+
 // indexes
 
 userSchema.index({ _id: 1});

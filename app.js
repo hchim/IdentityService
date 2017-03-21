@@ -15,6 +15,7 @@ var users = require('./routes/users');
 var index = require('./routes/index');
 var auth = require('./routes/auth')
 var google = require('./routes/google')
+var facebook = require('./routes/facebook')
 
 var app = express();
 
@@ -56,6 +57,7 @@ if (conf.get("env") !== 'test') {
 // setup routes
 app.use('/', auth);
 app.use('/google', google)
+app.use('/facebook', facebook)
 app.use('/users', middlewares.auth_middleware, users);
 
 //error handler
