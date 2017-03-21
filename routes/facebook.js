@@ -23,11 +23,11 @@ router.post('/verify-token', function (req, res, next) {
     var debug_url = 'https://graph.facebook.com/debug_token?input_token=' + accessToken
         + '&access_token=' + clientId + '|' + clientSec;
 
-    request.get({url: debug_url }, function (err, res, body) {
-        if (err) return done(err);
+    request.get({url: debug_url }, function (err, resp, body) {
+        if (err) return next(err);
 
-        var json = JSON.parse(body);
-        if (json['data']['is_valid'] !== true) {
+        var jsonObj = JSON.parse(body);
+        if (jsonObj['data']['is_valid'] !== true) {
             return res.json(utils.encodeResponseBody(req, {
                 "message": "Invalid facebook access Token.",
                 "errorCode": "INVALID_ID_TOKEN"

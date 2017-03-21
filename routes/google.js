@@ -27,7 +27,7 @@ router.post('/verify-token', function (req, res, next) {
     // https://github.com/google/google-auth-library-nodejs/blob/master/lib/auth/oauth2client.js
     // Or, if multiple clients access the backend:
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
-    client.verifyIdToken( idToken, client, function(e, login) {
+    client.verifyIdToken(idToken, client, function(e, login) {
         if (e) {
             return res.json(utils.encodeResponseBody(req, {
                 "message": "Invalid google ID Token.",
