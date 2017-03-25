@@ -62,39 +62,3 @@ router.post('/verify-token', function (req, res, next) {
 })
 
 module.exports = router;
-
-/*
- {
- "data": {
- "app_id": "1891279461107263",
- "application": "SleepAiden",
- "expires_at": 1495260948,
- "is_valid": true,
- "issued_at": 1490076948,
- "metadata": {
- "auth_type": "rerequest",
- "sso": "chrome_custom_tab"
- },
- "scopes": [
- "user_photos",
- "email",
- "public_profile"
- ],
- "user_id": "10212580935940955"
- }
- }
-
-
- {
- "data": {
- "error": {
- "code": 190,
- "message": "The access token could not be decrypted"
- },
- "is_valid": false,
- "scopes": [
-
- ]
- }
- }
- */

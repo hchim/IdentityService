@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var FileStreamRotator = require('file-stream-rotator');
 var fs = require('fs');
 var conf = require("./config");
-var metric = require('metricsclient')
+var metric = require('metricsclient')(conf)
 var middlewares = require('service-middlewares')(conf)
 var utils = require('servicecommonutils')
 
@@ -16,6 +16,7 @@ var index = require('./routes/index');
 var auth = require('./routes/auth')
 var google = require('./routes/google')
 var facebook = require('./routes/facebook')
+var wechat = require('./routes/wechat')
 
 var app = express();
 
@@ -58,6 +59,7 @@ if (conf.get("env") !== 'test') {
 app.use('/', auth);
 app.use('/google', google)
 app.use('/facebook', facebook)
+app.use(('/wechat', wechat))
 app.use('/users', middlewares.auth_middleware, users);
 
 //error handler

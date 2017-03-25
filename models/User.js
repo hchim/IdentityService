@@ -23,6 +23,11 @@ var userSchema = mongoose.Schema({
     verifyCode: String,
     securityCode: String,
     openidProvider: String, //Google, Facebook, Wechat
+    wechat_meta: {
+        openid: String,
+        accessToken: String,
+        refreshToken: String
+    }
 });
 
 /**

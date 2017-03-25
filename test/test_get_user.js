@@ -10,7 +10,7 @@ var commonUtils = require('servicecommonutils')
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");
-var dbUrl = conf.get('db.mongodb.url');
+var dbUrl = conf.get('mongodb.url');
 var endpoint = 'http://' + ip + ':' + port + '/users/';
 var login_endpoint = 'http://' + ip + ':' + port + '/login';
 
