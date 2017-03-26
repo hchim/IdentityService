@@ -10,7 +10,7 @@
     "metricservice": "http://localhost:3012"
   },
   "mongodb": {
-    "url": "mongodb://23.239.3.78/sleepdb"
+    "url": "mongodb://23.239.3.78/identitydb"
   },
   "redis": {
     "host": "23.239.3.78",
