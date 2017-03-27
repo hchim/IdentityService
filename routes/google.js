@@ -5,6 +5,7 @@ var GoogleAuth = require('google-auth-library');
 var conf = require("../config");
 var uuid = require('node-uuid');
 var utils = require('servicecommonutils')
+var winston = utils.getWinston(conf.get('env'))
 
 //init redis
 var host = conf.get('redis.host')
@@ -27,8 +28,9 @@ router.post('/verify-token', function (req, res, next) {
     // https://github.com/google/google-auth-library-nodejs/blob/master/lib/auth/oauth2client.js
     // Or, if multiple clients access the backend:
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3],
-    client.verifyIdToken(idToken, client, function(e, login) {
+    client.verifyIdToken(idToken, clientId, function(e, login) {
         if (e) {
+            winston.log('error', 'Invalid google id token: ' + idToken, e)
             return res.json(utils.encodeResponseBody(req, {
                 "message": "Invalid google ID Token.",
                 "errorCode": "INVALID_ID_TOKEN"
@@ -43,11 +45,15 @@ router.post('/verify-token', function (req, res, next) {
             "nickName": userName,
             "headerImageUrl": null,
             "emailVerified": true,
-            "openidProvider": 'Google'
+            "openidProvider": 'Google',
+            "google_meta": {
+                "idToken": idToken
+            }
         });
 
         User.getOrCreate(user, function (err, user) {
             if (err) {
+                winston.log('error', 'Failed to get user', err)
                 return next(err);
             }
 

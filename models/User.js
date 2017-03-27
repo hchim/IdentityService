@@ -27,6 +27,9 @@ var userSchema = mongoose.Schema({
         openid: String,
         accessToken: String,
         refreshToken: String
+    },
+    google_meta: {
+        idToken: String
     }
 });
 
