@@ -13,8 +13,7 @@ var userSchema = mongoose.Schema({
     nickName: {
         type: String,
         required: true,
-        maxlength: 20,
-        minlength: 5
+        maxlength: 20
     },
     headerImageUrl: String,
     emailVerified: { type: Boolean, default: false},
