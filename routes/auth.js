@@ -1,26 +1,19 @@
-/**
- * Created by huiche on 1/12/17.
- */
 var express = require('express');
 var router = express.Router();
 var User = require("../models/User");
 var bcrypt = require('bcrypt');
-var nodemailer = require('nodemailer');
 var conf = require("../config");
 var rs = require("randomstring");
 var uuid = require('node-uuid');
 var utils = require('servicecommonutils')
+var winston = utils.getWinston(conf.get("env"))
 
 require("string-format-js");
 
 //the expiration time of auth token, 30 days
 var auth_token_expire = conf.get('server.session.auth_token_expire');
 const saltRounds = 10;
-var transporter = nodemailer.createTransport({
-    transport: 'ses',
-    accessKeyId: conf.get('aws.ses.accessKeyId'),
-    secretAccessKey: conf.get('aws.ses.secretAccessKey')
-});
+var ses = utils.createSESClient(conf);
 
 //init redis
 var host = conf.get('redis.host')
@@ -101,18 +94,18 @@ router.post('/register', function(req, res, next) {
                     return next(err);
                 }
                 // send register success email
-                var mailOptions = {
-                    from: conf.get('email.from_email'),
-                    to: user.email,
-                    subject: conf.get('email_template.register.subject'),
-                    html: conf.get('email_template.register.html')
-                        .format(user.nickName, user.activateCode)
-                };
-                transporter.sendMail(mailOptions, function(error, info){
-                    if(error){
-                        return console.log(error);
+                utils.sendEmail(
+                    ses, 
+                    conf.get('email.from_email'), 
+                    user.email, 
+                    conf.get('email_template.register.subject'),
+                    conf.get('email_template.register.html').format(user.nickName, user.activateCode),
+                    function (err, data) {
+                        if (err) {
+                            winston.log('error', 'Failed to send email', {error: err});
+                        }
                     }
-                });
+                );
 
                 var accessToken = uuid.v4();
                 //add accessToken to redis
@@ -148,20 +141,19 @@ router.post('/reset-email', function (req, res, next) {
             user.securityCode = rs.generate({length: 6});
             user.save(function (err) {
                 if (err) return next(err);
-                var mailOptions = {
-                    from: conf.get('email.from_email'),
-                    to: user.email,
-                    subject: conf.get('email_template.reset_email.subject'),
-                    html: conf.get('email_template.reset_email.html')
-                        .format(user.nickName, user.securityCode)
-                };
-                // console.log(mailOptions);
-                transporter.sendMail(mailOptions, function(error, info){
-                    if(error){
-                        return console.log(error);
+                utils.sendEmail(
+                    ses,
+                    conf.get('email.from_email'),
+                    user.email,
+                    conf.get('email_template.reset_email.subject'),
+                    conf.get('email_template.reset_email.html').format(user.nickName, user.securityCode),
+                    function (err, data) {
+                        if (err) {
+                            winston.log('error', 'Failed to send email', {error: err});
+                        }
                     }
-                    console.log('Message sent: ' + info.response);
-                });
+                );
+
                 res.json(utils.encodeResponseBody(req, {
                     userId: user._id
                 }));
