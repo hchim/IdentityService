@@ -4,7 +4,7 @@ var User = require("../models/User");
 var bcrypt = require('bcrypt');
 var conf = require("../config");
 var rs = require("randomstring");
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var utils = require('servicecommonutils')
 var winston = utils.getWinston(conf.get("env"))
 
