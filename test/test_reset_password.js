@@ -1,5 +1,5 @@
-var User = require('../models/User');
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
+var User = require("identityservicemodels").User(mongoose.connection);
 var conf = require("../config");
 var request = require('request');
 var expect = require('Chai').expect;

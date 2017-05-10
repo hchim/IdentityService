@@ -2,7 +2,8 @@
  * Created by huiche on 1/13/17.
  */
 var assert = require('assert');
-var User = require('../models/User');
+var mongoose = require('mongoose')
+var User = require("identityservicemodels").User(mongoose.connection);
 var mongoose = require('mongoose');
 var conf = require("../config");
 var bcrypt = require('bcrypt');

@@ -1,12 +1,12 @@
 var assert = require('assert');
-var User = require('../models/User');
+var mongoose = require('mongoose')
+var User = require("identityservicemodels").User(mongoose.connection);
 var mongoose = require('mongoose');
 var conf = require("../config");
 var bcrypt = require('bcrypt');
 var request = require('request');
 var expect = require('Chai').expect;
 var fs = require('fs');
-var commonUtils = require('servicecommonutils')
 
 var port = conf.get('server.port');
 var ip = conf.get("server.ip");

@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var User = require("../models/User");
+var mongoose = require('mongoose')
+var User = require("identityservicemodels").User(mongoose.connection);
 var GoogleAuth = require('google-auth-library');
 var conf = require("../config");
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 var utils = require('servicecommonutils')
 var winston = utils.getWinston(conf.get('env'))
 
