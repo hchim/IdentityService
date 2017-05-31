@@ -25,9 +25,9 @@
     "randomstring": "*",
     "uuid": "*",
     "google-auth-library": "0.10.0",
-    "metricsclient": "git+ssh://git@git.sleepaiden.com:service-infrastructure/metricserviceclient.git",
-    "servicecommonutils": "git+ssh://git@git.sleepaiden.com:service-infrastructure/servicecommonutils.git",
-    "service-middlewares": "git+ssh://git@git.sleepaiden.com:service-infrastructure/servicemiddlewares.git",
-    "identityservicemodels": "git+ssh://git@git.sleepaiden.com:service-infrastructure/IdentityServiceModels.git"
+    "metricsclient": "git@github.com:hchim/MetricServiceClient.git",
+    "servicecommonutils": "git@github.com:hchim/ServiceCommonUtils.git",
+    "service-middlewares": "git@github.com:hchim/ServiceMiddlewares.git",
+    "identityservicemodels": "git@github.com:hchim/IdentityServiceModels.git"
   }
 }
