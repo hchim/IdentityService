@@ -1,2 +1,9 @@
 {
+  "mongodb": {
+    "url": "mongodb://10.0.254.10/sleepdb"
+  },
+  "redis": {
+    "host": "10.0.254.10",
+    "port": 6379
+  }
 }
