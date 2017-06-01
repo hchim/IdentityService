@@ -10,10 +10,10 @@
     "metricservice": "http://localhost:3012"
   },
   "mongodb": {
-    "url": "mongodb://23.239.3.78/identitydb"
+    "url": "mongodb://localhost/identitydb"
   },
   "redis": {
-    "host": "23.239.3.78",
+    "host": "localhost",
     "port": 6379
   }
 }
