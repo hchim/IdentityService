@@ -9,6 +9,7 @@ var conf = require("./config");
 var metric = require('metricsclient')(conf)
 var middlewares = require('service-middlewares')(conf)
 var utils = require('servicecommonutils')
+var winston = utils.getWinston(conf.get('env'));
 
 //routes
 var users = require('./routes/users');
@@ -44,7 +45,7 @@ if (conf.get("env") !== 'test') {
     app.use(function (req, res, next) {
         metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
             if (err != null)
-                console.log(err)
+                winston.log('error', err.message, err);
             next()
         })
     })

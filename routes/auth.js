@@ -39,7 +39,6 @@ router.post('/login', function (req, res, next) {
                 "errorCode": "ACCOUNT_NOT_EXIST"
             }));
         } else {
-            //TODO check user.active
             if (bcrypt.compareSync(password, user.passwordHash)) {
                 var accessToken = uuid.v4();
                 //add accessToken to redis
