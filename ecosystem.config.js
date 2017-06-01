@@ -7,14 +7,14 @@ module.exports = {
     {
       name: "IdentityService",
       script: "./bin/www",
-      env_development: {
-        NODE_ENV: "development"
-      },
-      env_production : {
+      env: {
         NODE_ENV: "production"
       },
+      env_development : {
+        NODE_ENV: "development"
+      },
       watch: false,
-      instances: 2,
+      instances: 1,
       exec_mode: "cluster",
       log_date_format: "YYYY-MM-DD HH:mm Z",
       error_file: "./log/errors.log",
