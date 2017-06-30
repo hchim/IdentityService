@@ -84,6 +84,7 @@ if (conf.get("env") === 'development') {
 // production error handler
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
+    winston.log('error', err.message, err);
     metric.errorMetric('IdentityService:Error:' + req.method + ':' + req.url, err, function (error, jsonObj) {
         if (error != null)
             return res.json(utils.encodeResponseBody(req, {
