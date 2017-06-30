@@ -12,10 +12,7 @@ var validator = require('validator')
 
 const saltRounds = 10;
 
-//setup access key for uploading header image
-AWS.config = new AWS.Config();
-AWS.config.accessKeyId = conf.get('aws.s3.header.accessKeyId');
-AWS.config.secretAccessKey = conf.get('aws.s3.header.secretAccessKey');
+AWS.config.loadFromPath('./config/s3Credential.json');
 
 router.get('/', function (req, res, next) {
     var id = req.headers['userId'];
@@ -97,12 +94,18 @@ router.post('/update-header', upload.single('image'), function(req, res, next) {
         }));
     }
 
-    var s3 = new AWS.S3();
+    var s3 = new AWS.S3({
+        apiVersion: '2006-03-01',
+        params: {
+            Bucket: conf.get('aws.s3.header.bucket')
+        }
+    });
     var fileBuffer = fs.readFileSync(req.file.path);
 
     var params = {
-        ACL: 'public-read', Bucket: conf.get('aws.s3.header.bucket'),
-        Body: fileBuffer, ContentType: 'image/jpg',
+        ACL: 'public-read',
+        Body: fileBuffer,
+        ContentType: 'image/jpg',
         Key: req.file.filename + '.jpg'
     };
 
@@ -111,15 +114,13 @@ router.post('/update-header', upload.single('image'), function(req, res, next) {
             return next(err);
         }
 
-        User.findOne({ '_id': id }, function (err, user) {
-            if (err) return next(err);
-
-            if (user != null) {
-                user.headerImageUrl = data.Location;
-                user.save();
-            }
-            res.json(utils.encodeResponseBody(req, {"headerImageUrl": data.Location}));
-        });
+        User.update(
+            {_id: id},
+            {$set: {headerImageUrl: data.Location}},
+            function (err) {
+                if (err) return next(err);
+                res.json(utils.encodeResponseBody(req, {"headerImageUrl": data.Location}));
+            });
     });
 });
 
