@@ -19,8 +19,7 @@ module.exports = {
       log_date_format: "YYYY-MM-DD HH:mm Z",
       error_file: "./log/errors.log",
       out_file: "./log/out.log",
-      combine_logs: true,
-      merge_logs: true
+      merge_logs: false
     }
   ]
 }
