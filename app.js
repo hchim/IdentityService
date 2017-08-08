@@ -22,16 +22,6 @@ fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-//api usage metric
-if (conf.get("env") !== 'test') {
-    app.use(function (req, res, next) {
-        metric.increaseCounter('IdentityService:Usage:' + req.method + ':' + req.url, function (err, jsonObj) {
-            if (err != null)
-                winston.log('error', err.message, err);
-            next()
-        })
-    })
-}
 
 app.use('/', index);
 //request signature checkup

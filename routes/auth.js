@@ -8,6 +8,8 @@ var rs = require("randomstring");
 var uuid = require('uuid');
 var utils = require('servicecommonutils')
 var winston = utils.getWinston(conf.get("env"))
+var conf = require("../config");
+var metric = require('metricsclient')(conf)
 
 require("string-format-js");
 
@@ -25,6 +27,11 @@ var redisClient = utils.createRedisClient(host, port)
  Login and generate access token.
  */
 router.post('/login', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:Login', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
+
     var email = req.body.email;
     var password = req.body.password;
 
@@ -66,6 +73,11 @@ router.post('/login', function (req, res, next) {
  Register a user account.
  */
 router.post('/register', function(req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:Register', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
+
     User.findOne({ 'email': req.body.email }, function (err, user) {
         if (err) {
             return next(err);
@@ -125,6 +137,10 @@ router.post('/register', function(req, res, next) {
 });
 
 router.post('/reset-email', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:ResetEmail', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var email = req.body.email;
 
     User.findOne({ 'email': email }, function (err, user) {
@@ -163,6 +179,10 @@ router.post('/reset-email', function (req, res, next) {
 });
 
 router.post('/reset-pswd', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:ResetPSWD', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var email = req.body.email;
 
     User.findOne({ 'email': email }, function (err, user) {

@@ -6,6 +6,7 @@ var conf = require("../config");
 var request = require('request');
 var uuid = require('uuid');
 var utils = require('servicecommonutils')
+var metric = require('metricsclient')(conf)
 
 //init redis
 var host = conf.get('redis.host')
@@ -17,6 +18,10 @@ var clientSec = conf.get('wechat.secret')
 var auth_token_expire = conf.get('server.session.auth_token_expire');
 
 router.post('/verify-token', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:WechatVerifyToken', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var code = req.body.code;
     var url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + clientId
         + '&secret=' + clientSec

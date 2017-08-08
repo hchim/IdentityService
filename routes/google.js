@@ -7,6 +7,7 @@ var conf = require("../config");
 var uuid = require('uuid');
 var utils = require('servicecommonutils')
 var winston = utils.getWinston(conf.get('env'))
+var metric = require('metricsclient')(conf)
 
 //init redis
 var host = conf.get('redis.host')
@@ -18,6 +19,10 @@ var clientSec = conf.get('google.secret')
 var auth_token_expire = conf.get('server.session.auth_token_expire');
 
 router.post('/verify-token', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:Auth:GoogleVerifyToken', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var email = req.body.email;
     var idToken = req.body.idToken;
     var userName = req.body.userName;

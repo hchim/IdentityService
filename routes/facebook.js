@@ -6,6 +6,7 @@ var conf = require("../config");
 var request = require('request');
 var uuid = require('uuid');
 var utils = require('servicecommonutils')
+var metric = require('metricsclient')(conf)
 
 //init redis
 var host = conf.get('redis.host')
@@ -17,6 +18,10 @@ var clientSec = conf.get('facebook.secret')
 var auth_token_expire = conf.get('server.session.auth_token_expire');
 
 router.post('/verify-token', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Auth:FacebookVerifyToken', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var email = req.body.email;
     var accessToken = req.body.accessToken;
     var userName = req.body.userName;

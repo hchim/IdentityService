@@ -9,12 +9,17 @@ var fs = require('fs');
 var bcrypt = require('bcrypt');
 var utils = require('servicecommonutils')
 var validator = require('validator')
+var metric = require('metricsclient')(conf)
 
 const saltRounds = 10;
 
 AWS.config.loadFromPath('./config/s3Credential.json');
 
 router.get('/', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:User:Get', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -46,6 +51,10 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/verify-email', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:User:VerifyEmail', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -86,6 +95,10 @@ router.post('/verify-email', function (req, res, next) {
 var upload = multer({ dest: conf.get('upload_dir')});
 
 router.post('/update-header', upload.single('image'), function(req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:User:UpdateHeader', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -125,6 +138,10 @@ router.post('/update-header', upload.single('image'), function(req, res, next) {
 });
 
 router.put('/update-name', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:User:UpdateName', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
@@ -157,6 +174,10 @@ router.put('/update-name', function (req, res, next) {
 });
 
 router.put('/update-pswd', function (req, res, next) {
+    metric.increaseCounter('IdentityService:Usage:User:UpdatePSWD', function (err, jsonObj) {
+        if (err != null)
+            winston.log('error', err.message, err);
+    })
     var id = req.headers['userId'];
     if (!id) {
         return res.json(utils.encodeResponseBody(req, {
