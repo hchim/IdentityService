@@ -11,6 +11,7 @@ var conf = require("../config");
 var mongoose = require('mongoose');
 var utils = require('servicecommonutils');
 var winston = utils.getWinston(conf.get('env'));
+var LogUploader = utils.LogUploader;
 
 /**
  * Get port from environment and store in Express.
@@ -97,6 +98,7 @@ function onListening() {
   winston.info('Running on http://' + addr.address + ":" + addr.port);
   // connect to database
   connect_db();
+  new LogUploader(24 * 60 * 60 * 1000, __dirname + '/../log/', conf).start()
 }
 
 function connect_db() {
