@@ -4,7 +4,6 @@ var mongoose = require('mongoose')
 var User = require("identityservicemodels").User(mongoose.connection);
 var multer  = require('multer')
 var conf = require("../config");
-var AWS = require('aws-sdk');
 var fs = require('fs');
 var bcrypt = require('bcrypt');
 var utils = require('servicecommonutils')
@@ -12,8 +11,6 @@ var validator = require('validator')
 var metric = require('metricsclient')(conf)
 
 const saltRounds = 10;
-
-AWS.config.loadFromPath('./config/s3Credential.json');
 
 router.get('/', function (req, res, next) {
     metric.increaseCounter('IdentityService:Usage:User:Get', function (err, jsonObj) {
@@ -107,13 +104,8 @@ router.post('/update-header', upload.single('image'), function(req, res, next) {
         }));
     }
 
-    var s3 = new AWS.S3({
-        apiVersion: '2006-03-01',
-        params: {
-            Bucket: conf.get('aws.s3.header.bucket')
-        }
-    });
-    var fileBuffer = fs.readFileSync(req.file.path);
+    var s3 = utils.createS3Client(conf.get('aws.s3.header.bucket'))
+    var fileBuffer = fs.readFileSync(req.file.path)
 
     var params = {
         ACL: 'public-read',
