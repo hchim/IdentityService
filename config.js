@@ -14,6 +14,6 @@ files.forEach(function (file) {
 });
 
 // Perform validation
-conf.validate({strict: true});
+conf.validate({allowed: 'strict'});
 
 module.exports = conf;
