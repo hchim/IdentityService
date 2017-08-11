@@ -9,6 +9,7 @@ var bcrypt = require('bcrypt');
 var utils = require('servicecommonutils')
 var validator = require('validator')
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get("env"))
 
 const saltRounds = 10;
 

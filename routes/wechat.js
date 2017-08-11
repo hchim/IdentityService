@@ -7,6 +7,7 @@ var request = require('request');
 var uuid = require('uuid');
 var utils = require('servicecommonutils')
 var metric = require('metricsclient')(conf)
+var winston = utils.getWinston(conf.get("env"))
 
 //init redis
 var host = conf.get('redis.host')
